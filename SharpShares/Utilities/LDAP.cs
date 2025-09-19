@@ -183,13 +183,10 @@ namespace SharpShares.Utilities
                         if (!String.IsNullOrEmpty(arguments.ou))
                         {
                             directoryEntry = "LDAP://" + arguments.ou;//OU=Domain Controllers,DC=example,DC=local";
-
                         }
                         else
                         {
-
                         directoryEntry = $"GC://{arguments.dc}/DC={arguments.domain.Replace(".", ",DC=")}";
-
                         }
                         Console.WriteLine($"[+] Attempting to connect to Global Catalog: {directoryEntry}");
                         entry = new DirectoryEntry(directoryEntry);
