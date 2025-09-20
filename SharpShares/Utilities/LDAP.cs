@@ -179,7 +179,15 @@ namespace SharpShares.Utilities
                 {
                     try
                     {
-                        string directoryEntry = $"GC://{arguments.dc}/DC={arguments.domain.Replace(".", ",DC=")}";
+                        string directoryEntry = "";
+                        if (!String.IsNullOrEmpty(arguments.ou))
+                        {
+                            directoryEntry = "LDAP://" + arguments.ou;//OU=Domain Controllers,DC=example,DC=local";
+                        }
+                        else
+                        {
+                        directoryEntry = $"GC://{arguments.dc}/DC={arguments.domain.Replace(".", ",DC=")}";
+                        }
                         Console.WriteLine($"[+] Attempting to connect to Global Catalog: {directoryEntry}");
                         entry = new DirectoryEntry(directoryEntry);
                         mySearcher = new DirectorySearcher(entry);
@@ -206,8 +214,12 @@ namespace SharpShares.Utilities
                 mySearcher.PageSize = int.MaxValue;
                 foreach (SearchResult resEnt in mySearcher.FindAll())
                 {
-                    string ComputerName = resEnt.Properties["dnshostname"][0].ToString();
-                    ComputerNames.Add(ComputerName);
+                    if (resEnt.Properties.Contains("dnshostname"))
+                    {
+                        string ComputerName = resEnt.Properties["dnshostname"][0].ToString();
+                        ComputerNames.Add(ComputerName);
+                    }
+
                 }
                 Console.WriteLine("[+] OU Search Results: {0}", ComputerNames.Count().ToString());
                 mySearcher.Dispose();
